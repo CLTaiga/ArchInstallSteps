@@ -1,8 +1,17 @@
 ARCH LINUX INSTALLATION (Gnome GUI)
+----------------------------------------------------
+Note:
+// xxx - comments
+xxx - commands to use
+----------------------------------------------------
 
-wifi-menu (if WIFI connection) / dhcpcd (if wired with dhcp router)
+// WIFI Connection only
+wifi-menu 
 
-// Static IP
+// DHCP Cable connection only
+dhcpcd (if wired with dhcp router)
+
+// Static IP connection
 ifconfig
 ip link set <eth0> up
 ip addr add <192.168.1.10/24> dev <eth0>
@@ -12,8 +21,14 @@ ping -c 3 google.pl
 
 pacman -Syy
 
+// Check your drives and figure out where you want to install Arch
+fdisk -l
+
+// Partition your drive
 cfdisk /dev/sda
 
+fdisk -l /dev/sda
+// For me root dir is sda5, home sda6, swap sda7
 mkfs.ext4 /dev/sda5
 mkfs.ext4 /dev/sda6
 mkswap /dev/sda7
@@ -28,7 +43,7 @@ pacstrap /mnt base base-devel
 genfstab -U -p /mnt >> /mnt/etc/fstab
 
 arch-chroot /mnt
-passwd (set root password)
+passwd
 
 nano /etc/locale.gen
 locale-gen
@@ -36,7 +51,7 @@ locale > /etc/locale.conf
 
 ls -a /usr/share/zoneinfo
 ln -s /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
-date (check if correct)
+date
 
 hwclock --systohc --utc 
 // hwclock --systohc --localtime (if system is shared with windows on one pc)
@@ -67,17 +82,21 @@ reboot
 Post-reboot login to username
 ----------------------------------------------------
 
+// WIFI connection
 sudo wifi-menu
+
+// Cable connection
 sudo dhcpcd
 ping -c 3 google.pl
 
-sudo systemctl enable dhcpcd (if wired connection is used, do not do this while using wifi)
+// To keep cable connection up after reboot, for WIFI you need to use #wifi-menu
+sudo systemctl enable dhcpcd
 
 export EDITOR=nano
 
 sudo nano /etc/pacman.conf
-// uncomment [multilib]
-// add at the end:
+// uncomment [multilib] section
+// add at the end to install yaourt:
 // [archlinuxfr]
 // SigLevel = Never
 // Server = http://repo.archlinux.fr/$arch
@@ -107,8 +126,11 @@ sudo pacman -S gnome gnome-tweak-tool networkmanager network-manager-applet fire
 //optional for tons of useless apps
 sudo pacman -S gnome-extra
 
+// Enable Network Manager and GDM services to start up on boot
 sudo systemctl enable NetworkManager
 sudo systemctl enable gdm
 
 sudo reboot
 
+----------------------------------------------------
+Have fun with your new Arch Linux @ Gnome3 distro
